@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.18)
 # Database: spiderweb_dev
-# Generation Time: 2019-02-24 22:05:57 +0000
+# Generation Time: 2019-02-27 05:59:59 +0000
 # ************************************************************
 
 
@@ -92,20 +92,6 @@ CREATE TABLE `CampaignNoteComment` (
 
 
 
-# Dump of table CampaignOwner
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `CampaignOwner`;
-
-CREATE TABLE `CampaignOwner` (
-  `User_ID` int(11) unsigned NOT NULL,
-  `Campaign_ID` int(11) unsigned NOT NULL,
-  `isOwner` tinyint(1) NOT NULL,
-  PRIMARY KEY (`User_ID`,`Campaign_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-
 # Dump of table CampaignNotePageDetail
 # ------------------------------------------------------------
 
@@ -159,6 +145,20 @@ CREATE TABLE `CampaignNotePageRelation` (
   `deletedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`ID`),
   KEY `relationInCampaign` (`Campaign_ID`,`PageRelation_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table CampaignOwner
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `CampaignOwner`;
+
+CREATE TABLE `CampaignOwner` (
+  `User_ID` int(11) unsigned NOT NULL,
+  `Campaign_ID` int(11) unsigned NOT NULL,
+  `isOwner` tinyint(1) NOT NULL,
+  PRIMARY KEY (`User_ID`,`Campaign_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -226,6 +226,7 @@ DROP TABLE IF EXISTS `Page`;
 
 CREATE TABLE `Page` (
   `ID` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `PageTemplate_ID` int(11) unsigned NOT NULL,
   `Version_ID` int(11) unsigned NOT NULL,
   `guid` char(15) NOT NULL DEFAULT '',
   `title` varchar(255) NOT NULL DEFAULT '',
@@ -273,12 +274,14 @@ CREATE TABLE `PageDetail` (
   `title` varchar(255) NOT NULL DEFAULT '',
   `summary` varchar(255) DEFAULT NULL,
   `partition` longtext NOT NULL,
+  `order` int(11) unsigned NOT NULL,
   `permission` char(2) DEFAULT NULL,
   `createdAt` datetime NOT NULL,
   `updatedAt` datetime NOT NULL,
   `deletedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`ID`),
-  KEY `Page_ID` (`Page_ID`)
+  KEY `Page_ID` (`Page_ID`),
+  KEY `order` (`order`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -382,6 +385,21 @@ CREATE TABLE `PagePropertyNumber` (
 
 
 
+# Dump of table PagePropertyOrder
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `PagePropertyOrder`;
+
+CREATE TABLE `PagePropertyOrder` (
+  `Page_ID` int(11) unsigned NOT NULL,
+  `Property_ID` int(11) unsigned NOT NULL,
+  `order` int(11) unsigned NOT NULL,
+  PRIMARY KEY (`Page_ID`,`Property_ID`),
+  KEY `order` (`order`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
 # Dump of table PagePropertyString
 # ------------------------------------------------------------
 
@@ -414,12 +432,14 @@ CREATE TABLE `PageRelation` (
   `Page_ID_patient` int(11) unsigned NOT NULL,
   `Relation_ID` int(11) unsigned NOT NULL,
   `summary` varchar(255) DEFAULT NULL,
+  `order` int(11) unsigned NOT NULL,
   `permission` char(2) NOT NULL DEFAULT '',
   `createdAt` datetime NOT NULL,
   `updatedAt` datetime NOT NULL,
   `deletedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`ID`),
-  KEY `Page_ID_agent` (`Page_ID_agent`)
+  KEY `Page_ID_agent` (`Page_ID_agent`),
+  KEY `order` (`order`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -434,6 +454,56 @@ CREATE TABLE `PageRelationOwner` (
   `PageRelation_ID` int(11) unsigned NOT NULL,
   `isOwner` tinyint(1) NOT NULL,
   PRIMARY KEY (`User_ID`,`PageRelation_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table PageTemplate
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `PageTemplate`;
+
+CREATE TABLE `PageTemplate` (
+  `ID` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `Version_ID` int(11) unsigned NOT NULL,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `hasProperties` tinyint(1) NOT NULL,
+  `hasDetails` tinyint(1) NOT NULL,
+  `hasRelations` tinyint(1) NOT NULL,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL,
+  `deletedAt` datetime DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table PageTemplateDefaultProperties
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `PageTemplateDefaultProperties`;
+
+CREATE TABLE `PageTemplateDefaultProperties` (
+  `PageTemplate_ID` int(11) unsigned NOT NULL,
+  `Property_ID` int(11) unsigned NOT NULL,
+  `order` int(11) unsigned NOT NULL,
+  PRIMARY KEY (`PageTemplate_ID`,`Property_ID`),
+  KEY `order` (`order`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table PageTemplateOwner
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `PageTemplateOwner`;
+
+CREATE TABLE `PageTemplateOwner` (
+  `User_ID` int(11) unsigned NOT NULL,
+  `PageTemplate_ID` int(11) unsigned NOT NULL,
+  `isOwner` tinyint(1) NOT NULL,
+  PRIMARY KEY (`User_ID`,`PageTemplate_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -489,12 +559,14 @@ CREATE TABLE `PropertyEnumDetail` (
   `title` varchar(255) NOT NULL DEFAULT '',
   `summary` varchar(255) DEFAULT NULL,
   `partition` longtext NOT NULL,
+  `order` int(11) unsigned NOT NULL,
   `permission` char(2) DEFAULT NULL,
   `createdAt` datetime NOT NULL,
   `updatedAt` datetime NOT NULL,
   `deletedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`ID`),
-  KEY `Page_ID` (`PropertyEnum_ID`)
+  KEY `Page_ID` (`PropertyEnum_ID`),
+  KEY `order` (`order`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
