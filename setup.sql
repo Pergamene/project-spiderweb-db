@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.18)
 # Database: spiderweb_dev
-# Generation Time: 2019-02-24 22:05:57 +0000
+# Generation Time: 2019-02-27 06:10:46 +0000
 # ************************************************************
 
 
@@ -92,20 +92,6 @@ CREATE TABLE `CampaignNoteComment` (
 
 
 
-# Dump of table CampaignOwner
-# ------------------------------------------------------------
-
-DROP TABLE IF EXISTS `CampaignOwner`;
-
-CREATE TABLE `CampaignOwner` (
-  `User_ID` int(11) unsigned NOT NULL,
-  `Campaign_ID` int(11) unsigned NOT NULL,
-  `isOwner` tinyint(1) NOT NULL,
-  PRIMARY KEY (`User_ID`,`Campaign_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
-
 # Dump of table CampaignNotePageDetail
 # ------------------------------------------------------------
 
@@ -159,6 +145,20 @@ CREATE TABLE `CampaignNotePageRelation` (
   `deletedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`ID`),
   KEY `relationInCampaign` (`Campaign_ID`,`PageRelation_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table CampaignOwner
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `CampaignOwner`;
+
+CREATE TABLE `CampaignOwner` (
+  `User_ID` int(11) unsigned NOT NULL,
+  `Campaign_ID` int(11) unsigned NOT NULL,
+  `isOwner` tinyint(1) NOT NULL,
+  PRIMARY KEY (`User_ID`,`Campaign_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -226,6 +226,7 @@ DROP TABLE IF EXISTS `Page`;
 
 CREATE TABLE `Page` (
   `ID` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `PageTemplate_ID` int(11) unsigned NOT NULL,
   `Version_ID` int(11) unsigned NOT NULL,
   `guid` char(15) NOT NULL DEFAULT '',
   `title` varchar(255) NOT NULL DEFAULT '',
@@ -239,6 +240,15 @@ CREATE TABLE `Page` (
   KEY `title` (`title`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+LOCK TABLES `Page` WRITE;
+/*!40000 ALTER TABLE `Page` DISABLE KEYS */;
+
+INSERT INTO `Page` (`ID`, `PageTemplate_ID`, `Version_ID`, `guid`, `title`, `summary`, `permission`, `createdAt`, `updatedAt`, `deletedAt`)
+VALUES
+	(1,1,1,'PG_123456789012','This is a test Page','A what? A test page. Oh a test page.','PR','2019-02-27 06:09:22','2019-02-27 06:09:22',NULL);
+
+/*!40000 ALTER TABLE `Page` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table PageAlias
@@ -273,12 +283,14 @@ CREATE TABLE `PageDetail` (
   `title` varchar(255) NOT NULL DEFAULT '',
   `summary` varchar(255) DEFAULT NULL,
   `partition` longtext NOT NULL,
+  `order` int(11) unsigned NOT NULL,
   `permission` char(2) DEFAULT NULL,
   `createdAt` datetime NOT NULL,
   `updatedAt` datetime NOT NULL,
   `deletedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`ID`),
-  KEY `Page_ID` (`Page_ID`)
+  KEY `Page_ID` (`Page_ID`),
+  KEY `order` (`order`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -295,6 +307,15 @@ CREATE TABLE `PageOwner` (
   PRIMARY KEY (`User_ID`,`Page_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+LOCK TABLES `PageOwner` WRITE;
+/*!40000 ALTER TABLE `PageOwner` DISABLE KEYS */;
+
+INSERT INTO `PageOwner` (`User_ID`, `Page_ID`, `isOwner`)
+VALUES
+	(1,1,1);
+
+/*!40000 ALTER TABLE `PageOwner` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table PagePropertyEnum
@@ -382,6 +403,21 @@ CREATE TABLE `PagePropertyNumber` (
 
 
 
+# Dump of table PagePropertyOrder
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `PagePropertyOrder`;
+
+CREATE TABLE `PagePropertyOrder` (
+  `Page_ID` int(11) unsigned NOT NULL,
+  `Property_ID` int(11) unsigned NOT NULL,
+  `order` int(11) unsigned NOT NULL,
+  PRIMARY KEY (`Page_ID`,`Property_ID`),
+  KEY `order` (`order`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
 # Dump of table PagePropertyString
 # ------------------------------------------------------------
 
@@ -414,12 +450,14 @@ CREATE TABLE `PageRelation` (
   `Page_ID_patient` int(11) unsigned NOT NULL,
   `Relation_ID` int(11) unsigned NOT NULL,
   `summary` varchar(255) DEFAULT NULL,
+  `order` int(11) unsigned NOT NULL,
   `permission` char(2) NOT NULL DEFAULT '',
   `createdAt` datetime NOT NULL,
   `updatedAt` datetime NOT NULL,
   `deletedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`ID`),
-  KEY `Page_ID_agent` (`Page_ID_agent`)
+  KEY `Page_ID_agent` (`Page_ID_agent`),
+  KEY `order` (`order`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -436,6 +474,74 @@ CREATE TABLE `PageRelationOwner` (
   PRIMARY KEY (`User_ID`,`PageRelation_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
+
+# Dump of table PageTemplate
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `PageTemplate`;
+
+CREATE TABLE `PageTemplate` (
+  `ID` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `Version_ID` int(11) unsigned NOT NULL,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `hasProperties` tinyint(1) NOT NULL,
+  `hasDetails` tinyint(1) NOT NULL,
+  `hasRelations` tinyint(1) NOT NULL,
+  `createdAt` datetime NOT NULL,
+  `updatedAt` datetime NOT NULL,
+  `deletedAt` datetime DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+LOCK TABLES `PageTemplate` WRITE;
+/*!40000 ALTER TABLE `PageTemplate` DISABLE KEYS */;
+
+INSERT INTO `PageTemplate` (`ID`, `Version_ID`, `name`, `hasProperties`, `hasDetails`, `hasRelations`, `createdAt`, `updatedAt`, `deletedAt`)
+VALUES
+	(1,1,'generic',1,1,1,'2019-02-27 06:07:52','2019-02-27 06:07:52',NULL);
+
+/*!40000 ALTER TABLE `PageTemplate` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table PageTemplateDefaultProperties
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `PageTemplateDefaultProperties`;
+
+CREATE TABLE `PageTemplateDefaultProperties` (
+  `PageTemplate_ID` int(11) unsigned NOT NULL,
+  `Property_ID` int(11) unsigned NOT NULL,
+  `order` int(11) unsigned NOT NULL,
+  PRIMARY KEY (`PageTemplate_ID`,`Property_ID`),
+  KEY `order` (`order`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Dump of table PageTemplateOwner
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `PageTemplateOwner`;
+
+CREATE TABLE `PageTemplateOwner` (
+  `User_ID` int(11) unsigned NOT NULL,
+  `PageTemplate_ID` int(11) unsigned NOT NULL,
+  `isOwner` tinyint(1) NOT NULL,
+  PRIMARY KEY (`User_ID`,`PageTemplate_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+LOCK TABLES `PageTemplateOwner` WRITE;
+/*!40000 ALTER TABLE `PageTemplateOwner` DISABLE KEYS */;
+
+INSERT INTO `PageTemplateOwner` (`User_ID`, `PageTemplate_ID`, `isOwner`)
+VALUES
+	(1,1,1);
+
+/*!40000 ALTER TABLE `PageTemplateOwner` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table Property
@@ -489,12 +595,14 @@ CREATE TABLE `PropertyEnumDetail` (
   `title` varchar(255) NOT NULL DEFAULT '',
   `summary` varchar(255) DEFAULT NULL,
   `partition` longtext NOT NULL,
+  `order` int(11) unsigned NOT NULL,
   `permission` char(2) DEFAULT NULL,
   `createdAt` datetime NOT NULL,
   `updatedAt` datetime NOT NULL,
   `deletedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`ID`),
-  KEY `Page_ID` (`PropertyEnum_ID`)
+  KEY `Page_ID` (`PropertyEnum_ID`),
+  KEY `order` (`order`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -608,6 +716,15 @@ CREATE TABLE `User` (
   KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+LOCK TABLES `User` WRITE;
+/*!40000 ALTER TABLE `User` DISABLE KEYS */;
+
+INSERT INTO `User` (`ID`, `email`, `createdAt`, `updatedAt`, `deletedAt`)
+VALUES
+	(1,'test@email.com','2019-02-27 06:07:03','2019-02-27 06:07:03',NULL);
+
+/*!40000 ALTER TABLE `User` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table Version
@@ -618,13 +735,22 @@ DROP TABLE IF EXISTS `Version`;
 CREATE TABLE `Version` (
   `ID` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL DEFAULT '',
-  `Version_ID_parent` int(11) unsigned NOT NULL,
+  `Version_ID_parent` int(11) unsigned DEFAULT NULL,
   `createdAt` datetime NOT NULL,
   `updatedAt` datetime NOT NULL,
   `deletedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+LOCK TABLES `Version` WRITE;
+/*!40000 ALTER TABLE `Version` DISABLE KEYS */;
+
+INSERT INTO `Version` (`ID`, `name`, `Version_ID_parent`, `createdAt`, `updatedAt`, `deletedAt`)
+VALUES
+	(1,'master',NULL,'2019-02-27 06:06:33','2019-02-27 06:06:33',NULL);
+
+/*!40000 ALTER TABLE `Version` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 # Dump of table VersionOwner
@@ -639,6 +765,15 @@ CREATE TABLE `VersionOwner` (
   PRIMARY KEY (`User_ID`,`Version_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+LOCK TABLES `VersionOwner` WRITE;
+/*!40000 ALTER TABLE `VersionOwner` DISABLE KEYS */;
+
+INSERT INTO `VersionOwner` (`User_ID`, `Version_ID`, `isOwner`)
+VALUES
+	(1,1,1);
+
+/*!40000 ALTER TABLE `VersionOwner` ENABLE KEYS */;
+UNLOCK TABLES;
 
 
 
