@@ -1,4 +1,4 @@
-FROM mysql:latest
+FROM mysql:5
 
 ENV MYSQL_ROOT_PASSWORD rootpassword
 ENV MYSQL_DATABASE spiderweb_dev
