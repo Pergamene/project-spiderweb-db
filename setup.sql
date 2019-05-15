@@ -5,9 +5,9 @@
 # http://www.sequelpro.com/
 # https://github.com/sequelpro/sequelpro
 #
-# Host: 127.0.0.1 (MySQL 5.7.18)
+# Host: 127.0.0.1 (MySQL 5.7.26)
 # Database: spiderweb_dev
-# Generation Time: 2019-02-27 06:10:46 +0000
+# Generation Time: 2019-05-15 17:02:54 +0000
 # ************************************************************
 
 
@@ -280,6 +280,7 @@ CREATE TABLE `PageDetail` (
   `ID` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `Version_ID` int(11) unsigned NOT NULL,
   `Page_ID` int(11) unsigned NOT NULL,
+  `guid` char(15) DEFAULT NULL,
   `title` varchar(255) NOT NULL DEFAULT '',
   `summary` varchar(255) DEFAULT NULL,
   `partition` longtext NOT NULL,
@@ -290,7 +291,8 @@ CREATE TABLE `PageDetail` (
   `deletedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`ID`),
   KEY `Page_ID` (`Page_ID`),
-  KEY `order` (`order`)
+  KEY `order` (`order`),
+  KEY `guid` (`guid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
