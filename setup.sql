@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.26)
 # Database: spiderweb_dev
-# Generation Time: 2019-05-15 17:02:54 +0000
+# Generation Time: 2019-05-29 15:30:39 +0000
 # ************************************************************
 
 
@@ -62,6 +62,7 @@ DROP TABLE IF EXISTS `Campaign`;
 
 CREATE TABLE `Campaign` (
   `ID` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `guid` char(15) DEFAULT NULL,
   `name` varchar(255) NOT NULL DEFAULT '',
   `summary` varchar(255) DEFAULT NULL,
   `permission` char(2) NOT NULL DEFAULT '',
@@ -69,7 +70,8 @@ CREATE TABLE `Campaign` (
   `updatedAt` datetime NOT NULL,
   `deletedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`ID`),
-  KEY `name` (`name`)
+  KEY `name` (`name`),
+  KEY `guid` (`guid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -107,7 +109,8 @@ CREATE TABLE `CampaignNotePageDetail` (
   `updatedAt` datetime NOT NULL,
   `deletedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`ID`),
-  KEY `detailInCampaign` (`Campaign_ID`,`PageDetail_ID`)
+  KEY `detailInCampaign` (`Campaign_ID`,`PageDetail_ID`),
+  KEY `notePartitionRange` (`partition_noteStart`,`partition_noteEnd`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -486,7 +489,9 @@ DROP TABLE IF EXISTS `PageTemplate`;
 CREATE TABLE `PageTemplate` (
   `ID` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `Version_ID` int(11) unsigned NOT NULL,
+  `guid` char(15) DEFAULT NULL,
   `name` varchar(255) NOT NULL DEFAULT '',
+  `summary` varchar(255) DEFAULT NULL,
   `hasProperties` tinyint(1) NOT NULL,
   `hasDetails` tinyint(1) NOT NULL,
   `hasRelations` tinyint(1) NOT NULL,
@@ -494,15 +499,16 @@ CREATE TABLE `PageTemplate` (
   `updatedAt` datetime NOT NULL,
   `deletedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`ID`),
-  KEY `name` (`name`)
+  KEY `name` (`name`),
+  KEY `guid` (`guid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `PageTemplate` WRITE;
 /*!40000 ALTER TABLE `PageTemplate` DISABLE KEYS */;
 
-INSERT INTO `PageTemplate` (`ID`, `Version_ID`, `name`, `hasProperties`, `hasDetails`, `hasRelations`, `createdAt`, `updatedAt`, `deletedAt`)
+INSERT INTO `PageTemplate` (`ID`, `Version_ID`, `guid`, `name`, `summary`, `hasProperties`, `hasDetails`, `hasRelations`, `createdAt`, `updatedAt`, `deletedAt`)
 VALUES
-	(1,1,'generic',1,1,1,'2019-02-27 06:07:52','2019-02-27 06:07:52',NULL);
+	(1,1,'PGT_12345678901','generic','',1,1,1,'2019-02-27 06:07:52','2019-02-27 06:07:52',NULL);
 
 /*!40000 ALTER TABLE `PageTemplate` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -741,7 +747,8 @@ CREATE TABLE `Version` (
   `createdAt` datetime NOT NULL,
   `updatedAt` datetime NOT NULL,
   `deletedAt` datetime DEFAULT NULL,
-  PRIMARY KEY (`ID`)
+  PRIMARY KEY (`ID`),
+  KEY `Version_ID_parent` (`Version_ID_parent`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `Version` WRITE;
