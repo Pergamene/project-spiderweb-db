@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.27)
 # Database: spiderweb_dev
-# Generation Time: 2019-08-10 17:23:02 +0000
+# Generation Time: 2019-08-10 17:25:02 +0000
 # ************************************************************
 
 
@@ -758,7 +758,7 @@ LOCK TABLES `Version` WRITE;
 
 INSERT INTO `Version` (`ID`, `guid`, `name`, `Version_ID_parent`, `createdAt`, `updatedAt`, `deletedAt`)
 VALUES
-	(1,'0','master',NULL,'2019-02-27 06:06:33','2019-02-27 06:06:33',NULL);
+	(1,'VR_123456789012','master',NULL,'2019-02-27 06:06:33','2019-02-27 06:06:33',NULL);
 
 /*!40000 ALTER TABLE `Version` ENABLE KEYS */;
 UNLOCK TABLES;
