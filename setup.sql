@@ -7,7 +7,7 @@
 #
 # Host: 127.0.0.1 (MySQL 5.7.26)
 # Database: spiderweb_dev
-# Generation Time: 2019-05-29 15:30:39 +0000
+# Generation Time: 2019-08-16 20:16:31 +0000
 # ************************************************************
 
 
@@ -716,6 +716,7 @@ DROP TABLE IF EXISTS `User`;
 
 CREATE TABLE `User` (
   `ID` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `guid` char(15) NOT NULL,
   `email` varchar(255) NOT NULL DEFAULT '',
   `createdAt` datetime NOT NULL,
   `updatedAt` datetime NOT NULL,
@@ -727,9 +728,9 @@ CREATE TABLE `User` (
 LOCK TABLES `User` WRITE;
 /*!40000 ALTER TABLE `User` DISABLE KEYS */;
 
-INSERT INTO `User` (`ID`, `email`, `createdAt`, `updatedAt`, `deletedAt`)
+INSERT INTO `User` (`ID`, `guid`, `email`, `createdAt`, `updatedAt`, `deletedAt`)
 VALUES
-	(1,'test@email.com','2019-02-27 06:07:03','2019-02-27 06:07:03',NULL);
+	(1,'UR_123456789012','test@email.com','2019-02-27 06:07:03','2019-02-27 06:07:03',NULL);
 
 /*!40000 ALTER TABLE `User` ENABLE KEYS */;
 UNLOCK TABLES;
