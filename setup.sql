@@ -743,21 +743,23 @@ DROP TABLE IF EXISTS `Version`;
 
 CREATE TABLE `Version` (
   `ID` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `guid` char(15) NOT NULL DEFAULT '',
   `name` varchar(255) NOT NULL DEFAULT '',
   `Version_ID_parent` int(11) unsigned DEFAULT NULL,
   `createdAt` datetime NOT NULL,
   `updatedAt` datetime NOT NULL,
   `deletedAt` datetime DEFAULT NULL,
   PRIMARY KEY (`ID`),
-  KEY `Version_ID_parent` (`Version_ID_parent`)
+  KEY `Version_ID_parent` (`Version_ID_parent`),
+  KEY `guid` (`guid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `Version` WRITE;
 /*!40000 ALTER TABLE `Version` DISABLE KEYS */;
 
-INSERT INTO `Version` (`ID`, `name`, `Version_ID_parent`, `createdAt`, `updatedAt`, `deletedAt`)
+INSERT INTO `Version` (`ID`, `guid`, `name`, `Version_ID_parent`, `createdAt`, `updatedAt`, `deletedAt`)
 VALUES
-	(1,'master',NULL,'2019-02-27 06:06:33','2019-02-27 06:06:33',NULL);
+	(1,'VR_123456789012','master',NULL,'2019-02-27 06:06:33','2019-02-27 06:06:33',NULL);
 
 /*!40000 ALTER TABLE `Version` ENABLE KEYS */;
 UNLOCK TABLES;
